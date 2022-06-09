@@ -167,3 +167,10 @@ COMMENT ON COLUMN salsa.idProducto IS  'Identificador de la salsa';
 COMMENT ON COLUMN salsa.recomendacionPlatillo IS  'Recomendación de combinación de salsa y platillo';
 COMMENT ON COLUMN salsa.presentacion  IS 'Presentación de la salsa en un platillo';
 COMMENT ON COLUMN salsa.nivelPicor IS  'Nivel de picor de la salsa';
+
+CREATE TABLE trabajar(
+  curp  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18),
+  idSucursal int NOT NULL CHECK (idSucursal > 0),
+  --PRIMARY KEY (curp)
+  --FOREIGN KEY (idSucursal)
+);
