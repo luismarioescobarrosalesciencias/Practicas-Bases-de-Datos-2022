@@ -100,9 +100,9 @@ CREATE TABLE vehiculo(
 
 CREATE TABLE ticketmesa(
 numeroTM int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
-curpc  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
-curpm  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
-idSucursal int NOT NULL CHECK (idSucursal > 0) UNIQUE,
+curpc  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) ,
+curpm  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) ,
+idSucursal int NOT NULL CHECK (idSucursal > 0),
 fecha DATE NOT NULL,
 tipoPago CHAR(1) NOT NULL CHECK (tipoPago SIMILAR TO '(t|T|e|E|p|P)' )
 subtotal NUMERIC NOT NULL, --triggers
@@ -111,9 +111,9 @@ total NUMERIC NOT NULL --triggers
 );
 CREATE TABLE ticketAdomicilio(
   numeroAD int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
-  curpc  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
-  curpr  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
-  idSucursal int NOT NULL CHECK (idSucursal > 0) UNIQUE,
+  curpc  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) ,
+  curpr  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) ,
+  idSucursal int NOT NULL CHECK (idSucursal > 0) ,
   fecha DATE NOT NULL,
   tipoPago CHAR(1) NOT NULL CHECK (tipoPago SIMILAR TO '(t|T|e|E|p|P)' )
   subtotal NUMERIC NOT NULL, --triggers
@@ -127,8 +127,8 @@ CREATE TABLE sucursal(
     calleS VARCHAR(70)  NOT NULL CHECK (calleS <>''),
     numeroS int NOT NULL CHECK(numeroS BETWEEN 1 and 9999),  -- No acepta numeros menores a 1 , ni mayores a 9999
     cpS CHAR(5) NOT NULL  CHECK (cpS SIMILAR TO '[0-9]{5}'), -- No acepta numeros menores a 00001 , ni mayores a 99999
-    estadoS VARCHAR(50) NOT NULL  CHECK (estadoS <>''), --Deberia ser unique ?
-    alcaldia VARCHAR(50) NOT NULL  CHECK (alcaldia <>''), --Deberia ser unique ?
+    estadoS VARCHAR(50) NOT NULL  CHECK (estadoS <>'') UNIQUE, --Deberia ser unique ?
+    alcaldia VARCHAR(50) NOT NULL  CHECK (alcaldia <>'') UNIQUE, --Deberia ser unique ?
     --PRIMARY KEY(idSucursal)
 );
 COMMENT ON TABLE sucursal IS 'Tabla que guarda todos los datos de una sucursal';
@@ -205,21 +205,21 @@ COMMENT ON COLUMN salsa.nivelPicor IS  'Nivel de picor de la salsa';
 
 CREATE TABLE precio(
   idProducto int NOT NULL CHECK (idProducto > 0) UNIQUE,
-  idPrecio int NOT NULL CHECK (idProducto > 0) UNIQUE,
+  idPrecio int NOT NULL CHECK (idProducto > 0) ,
   precio NUMERIC NOT NULL,
   fecha DATE NOT NULL
 );
 
 
 CREATE TABLE tener(
-    idSucursal int NOT NULL CHECK (idSucursal > 0) UNIQUE,
-    idInventario int NOT NULL CHECK (idInventario >0) UNIQUE,
+    idSucursal int NOT NULL CHECK (idSucursal > 0) ,
+    idInventario int NOT NULL CHECK (idInventario >0) UNIQUE,  --- ?
     cantidad int NOT NULL
 
 );
 CREATE TABLE disponer(
-  idSucursal int NOT NULL CHECK (idSucursal > 0) UNIQUE,
-  idIngrediente int NOT NULL CHECK (idProducto > 0) UNIQUE
+  idSucursal int NOT NULL CHECK (idSucursal > 0) ,
+  idIngrediente int NOT NULL CHECK (idProducto > 0)
 
 );
 CREATE TABLE surtir(
