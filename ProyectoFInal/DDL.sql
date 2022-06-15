@@ -33,10 +33,15 @@ COMMENT ON TABLE telefono IS 'Tabla que guarda el telefono de una persona '
 
 CREATE TABLE cliente(
   curp  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
-  puntosAcumulados int CHECK(idConsultorio >=0)
+  puntosAcumulados
+  --Los clientes que son empleados tienen el servicio gratis procedimiento almacenado
   --PRIMARY KEY curp
 );
-
+--promociones
+--costo
+--precio nulo empleados
+--aumento de salario por antiguedad
+--
 CREATE TABLE empleado(
   curp  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
   rfc CHAR(13) NOT NULL CHECK(CHAR_LENGTH(rfc)=13) UNIQUE,
@@ -44,6 +49,9 @@ CREATE TABLE empleado(
   fechaNacimiento DATE NOT NULL,
   fechadeIngreso DATE NOT NULL ,
   salario NUMERIC NOT NULL CHECK (salario > 0)
+  antiguedad
+  edad
+
 
   --PRIMARY KEY curp
 );
@@ -89,6 +97,9 @@ CREATE TABLE vehiculo(
 
 CREATE TABLE ticketmesa(
 numero int CHECK(numero BETWEEN 1 and 10000)
+--total triggers
+--subtotal triggers
+
 --PRIMARY KEY (numero)
 );
 CREATE TABLE ticketAdomicilio(
