@@ -89,7 +89,7 @@ CREATE TABLE repartidor(
 );
 CREATE TABLE vehiculo(
    curp  CHAR(18)  CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
-   numeroSerie CHAR(18) NOT NULL CHECK(CHAR_LENGTH(numeroSerie)=17) ,
+   numeroSerie CHAR(17) NOT NULL CHECK(CHAR_LENGTH(numeroSerie)=17) ,
    marca  CHAR(20),
    modelo CHAR(20),
    tipo   CHAR(20)
@@ -194,8 +194,9 @@ COMMENT ON COLUMN producto.tipo IS  'Tipo de producto';
 CREATE TABLE salsa (
     idProducto int NOT NULL CHECK (idProducto > 0) UNIQUE,
     presentacion VARCHAR(100),
-    nivelPicor  VARCHAR(100)
+    nivelPicor  VARCHAR(100) CHECK (tipoPago SIMILAR TO '(P||M|A|)')
 );
+--P poco, M medio, A alto
 
 COMMENT ON TABLE salsa IS 'Tabla que guarda la información de la salsa ';
 COMMENT ON COLUMN salsa.idProducto IS  'Identificador de la salsa';
