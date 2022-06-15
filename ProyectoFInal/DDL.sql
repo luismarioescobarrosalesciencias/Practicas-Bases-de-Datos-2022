@@ -96,7 +96,7 @@ CREATE TABLE vehiculo(
 );
 
 CREATE TABLE ticketmesa(
-numero int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
+numeroTM int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
 curpc  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
 curpm  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
 idSucursal int NOT NULL CHECK (idSucursal > 0) UNIQUE,
@@ -107,9 +107,9 @@ total NUMERIC NOT NULL --triggers
 --PRIMARY KEY (numero)
 );
 CREATE TABLE ticketAdomicilio(
-  numero int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
+  numeroAD int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
   curpc  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
-  curpm  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
+  curpr  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
   idSucursal int NOT NULL CHECK (idSucursal > 0) UNIQUE,
   fecha DATE NOT NULL,
   tipoPago CHAR(1) NOT NULL CHECK (tipoPago SIMILAR TO '(t|T|e|E|p|P)' )
@@ -270,3 +270,54 @@ ALTER TABLE inventario ADD CONSTRAINT inventario_pkey PRIMARY KEY (idInventario)
 ALTER TABLE ingrediente ADD CONSTRAINT ingrediente_pkey PRIMARY KEY (idIngrediente);
 ALTER TABLE producto ADD CONSTRAINT producto_pkey PRIMARY KEY (idProducto);
 ALTER TABLE proveedor ADD CONSTRAINT proveedor_pkey PRIMARY KEY (rfc);
+ALTER TABLE salsa ADD CONSTRAINT idProducto_pkey PRIMARY KEY(idProducto);
+
+ --Llaves compuestas y foraneas
+--vehiculo,precio,telefono
+
+ALTER TABLE telefono ADD CONSTRAINT telefono_pkey PRIMARY KEY (curp,telefono);
+
+ALTER TABLE vehiculo ADD CONSTRAINT vehiculo_pkey PRIMARY KEY (curp,numeroSerie);
+
+ALTER TABLE precio ADD CONSTRAINT precio_pkey PRIMARY KEY (idProducto,idPrecio);
+
+ALTER TABLE empleado ADD CONSTRAINT empleado_pkey PRIMARY KEY (curp);
+ALTER TABLE empleado ADD CONSTRAINT empleado_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal)
+
+ALTER TABLE ticketmesa ADD CONSTRAINT ticketmesaN_pkey PRIMARY KEY (numeroTM);
+ALTER TABLE ticketmesa ADD CONSTRAINT ticketmesaC_fkey FOREIGN KEY(curpc) REFERENCES cliente(curp);
+ALTER TABLE ticketmesa ADD CONSTRAINT ticketmesaCm_fkey FOREIGN KEY(curpm) REFERENCES cliente(curp);
+ALTER TABLE ticketmesa ADD CONSTRAINT ticketmesaS_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal);
+
+ALTER TABLE ticketAdomicilio ADD CONSTRAINT ticketAN_pkey PRIMARY KEY (numeroTM);
+ALTER TABLE ticketAdomicilio ADD CONSTRAINT ticketAC_fkey FOREIGN KEY(curpc) REFERENCES cliente(curp);
+ALTER TABLE ticketAdomicilio ADD CONSTRAINT ticketACm_fkey FOREIGN KEY(curpr) REFERENCES cliente(curp);
+ALTER TABLE ticketAdomicilio ADD CONSTRAINT ticketAS_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal);
+
+ALTER TABLE tener  ADD CONSTRAINT tenerS_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal);
+ALTER TABLE tener  ADD CONSTRAINT tenerI_fkey FOREIGN KEY(idInventario) REFERENCES inventario(idInventario);
+
+ALTER TABLE disponer  ADD CONSTRAINT disponerS_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal);
+ALTER TABLE disponer  ADD CONSTRAINT disponerI_fkey FOREIGN KEY(idIngrediente) REFERENCES ingrediente(idIngrediente);
+
+
+ALTER TABLE consumirmesa ADD CONSTRAINT consumirmesaN_fkey FOREIGN KEY(numero) REFERENCES sucursal(idSucursal);
+ALTER TABLE consumirmesa ADD CONSTRAINT consumirmesaP_fkey FOREIGN KEY(idProducto) REFERENCES producto(idProducto);
+
+ALTER TABLE consumiraDomicilio ADD CONSTRAINT consumirAN_fkey FOREIGN KEY(numero) REFERENCES sucursal(idSucursal);
+ALTER TABLE consumiraDomicilio ADD CONSTRAINT consumirAP_fkey FOREIGN KEY(idProducto) REFERENCES producto(idProducto);
+
+ALTER TABLE surtir ADD CONSTRAINT surtir_fkey FOREIGN KEY(idIngrediente) REFERENCES ingrediente(idIngrediente);
+ALTER TABLE surtir ADD CONSTRAINT surtirP_fkey FOREIGN KEY(rfc) REFERENCES proveedor(rfc);
+
+ALTER TABLE integrar ADD CONSTRAINT integrarI_fkey FOREIGN KEY (idIngrediente) REFERENCES ingrediente(idIngrediente);
+ALTER TABLE integrar ADD CONSTRAINT integrarP_fkey FOREIGN KEY (idProducto) REFERENCES producto(idProducto);
+
+ALTER TABLE enviar ADD CONSTRAINT enviarI_fkey FOREIGN KEY (idInventario) REFERENCES inventario(idInventario);
+ALTER TABLE enviar ADD CONSTRAINT enviarRFC_fkey FOREIGN KEY (rfc) REFERENCES proveedor(rfc);
+
+ALTER TABLE recomendar ADD CONSTRAINT recomendarP_fkey FOREIGN KEY (idProducto) REFERENCES producto(idProducto);
+ALTER TABLE recomendar ADD CONSTRAINT recomendarS_fkey FOREIGN KEY (idProducto) REFERENCES salsa(idProducto);
+
+--enviar
+--recomendar
