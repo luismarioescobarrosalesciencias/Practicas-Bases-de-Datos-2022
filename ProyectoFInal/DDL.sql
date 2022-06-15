@@ -10,8 +10,9 @@ CREATE TABLE persona(
   numero   int CHECK(numeroT BETWEEN 0 and 9999),
   cp     CHAR(5) CHECK (cpT SIMILAR TO '[0-9]{5}'),
   estado VARCHAR(30),
-  email VARCHAR(80)  -- expresion regular probable
+  email VARCHAR(80)
 );
+
 COMMENT ON TABLE persona IS 'Tabla que guarda los datos de una persona';
 COMMENT ON COLUMN persona.curp IS 'Curp de la persona';
 COMMENT ON COLUMN persona.nombre IS 'Nombre de la persona';
@@ -44,15 +45,14 @@ CREATE TABLE cliente(
 --
 CREATE TABLE empleado(
   curp  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
+  idSucursal int NOT NULL CHECK (idSucursal > 0) UNIQUE,
   rfc CHAR(13) NOT NULL CHECK(CHAR_LENGTH(rfc)=13) UNIQUE,
   nss CHAR(9) CHECK (cpT SIMILAR TO '[0-9]{9}') UNIQUE,
   fechaNacimiento DATE NOT NULL,
   fechadeIngreso DATE NOT NULL ,
   salario NUMERIC NOT NULL CHECK (salario > 0)
-  antiguedad
-  edad
-
-
+  antiguedad DATE NOT NULL, -- (procedimientos almacenados )
+  edad DATE NOT NULL
   --PRIMARY KEY curp
 );
 
@@ -96,19 +96,31 @@ CREATE TABLE vehiculo(
 );
 
 CREATE TABLE ticketmesa(
-numero int CHECK(numero BETWEEN 1 and 10000)
---total triggers
---subtotal triggers
-
+numero int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
+curpc  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
+curpm  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
+idSucursal int NOT NULL CHECK (idSucursal > 0) UNIQUE,
+fecha DATE NOT NULL,
+tipoPago CHAR(1) NOT NULL CHECK (tipoPago SIMILAR TO '(t|T|e|E|p|P)' )
+subtotal NUMERIC NOT NULL, --triggers
+total NUMERIC NOT NULL --triggers
 --PRIMARY KEY (numero)
 );
 CREATE TABLE ticketAdomicilio(
-  numero int CHECK(numero BETWEEN 1 and 10000)
+  numero int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
+  curpc  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
+  curpm  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
+  idSucursal int NOT NULL CHECK (idSucursal > 0) UNIQUE,
+  fecha DATE NOT NULL,
+  tipoPago CHAR(1) NOT NULL CHECK (tipoPago SIMILAR TO '(t|T|e|E|p|P)' )
+  subtotal NUMERIC NOT NULL, --triggers
+  total NUMERIC NOT NULL
   --Primary key (numero)
 );
 
 CREATE TABLE sucursal(
     idSucursal int NOT NULL CHECK (idSucursal > 0) UNIQUE,
+    rfc CHAR(13) NOT NULL CHECK(CHAR_LENGTH(rfc)=13) UNIQUE,
     calleS VARCHAR(70)  NOT NULL CHECK (calleS <>''),
     numeroS int NOT NULL CHECK(numeroS BETWEEN 1 and 9999),  -- No acepta numeros menores a 1 , ni mayores a 9999
     cpS CHAR(5) NOT NULL  CHECK (cpS SIMILAR TO '[0-9]{5}'), -- No acepta numeros menores a 00001 , ni mayores a 99999
@@ -144,7 +156,7 @@ COMMENT ON COLUMN proveedor.telefonoP IS 'Número telefonico del proveedor';
 CREATE TABLE inventario (
     idInventario int NOT NULL CHECK (idInventario >0) UNIQUE,
     tipoI CHAR(20) NOT NULL  CHECK (tipoI <>''),
-    marcaI CHAR(15),
+    marcaI CHAR(15),   --posible procedimiento almacenado
     cantidadI NUMERIC CHECK(cantidadI >= 0)
     --PRIMARY KEY(idInventario)
 );
@@ -160,6 +172,16 @@ CREATE TABLE producto (
     tipo CHAR(20) NOT NULL  CHECK (tipo <>''),
     --PRIMARY KEY(idProducto)
 );
+CREATE TABLE ingrediente(
+  idIngrediente int NOT NULL CHECK (idProducto > 0) UNIQUE,
+  marca VARCHAR(30),
+  nombreI VARCHAR(30) NOT NULL,
+  unidadmedida NUMERIC NOT NULL,
+  cantidadIg int NOT NULL,
+  fechaCaducidad DATE NOT NULL
+
+);
+
 
 COMMENT ON TABLE producto IS 'Tabla que guarda la información del producto';
 COMMENT ON COLUMN producto.idProducto IS 'Identificador del producto';
@@ -168,7 +190,6 @@ COMMENT ON COLUMN producto.tipo IS  'Tipo de producto';
 
 CREATE TABLE salsa (
     idProducto int NOT NULL CHECK (idProducto > 0) UNIQUE,
-    recomendacionPlatillo VARCHAR(100),
     presentacion VARCHAR(100),
     nivelPicor  VARCHAR(100),
 );
@@ -179,9 +200,73 @@ COMMENT ON COLUMN salsa.recomendacionPlatillo IS  'Recomendación de combinació
 COMMENT ON COLUMN salsa.presentacion  IS 'Presentación de la salsa en un platillo';
 COMMENT ON COLUMN salsa.nivelPicor IS  'Nivel de picor de la salsa';
 
-CREATE TABLE trabajar(
-  curp  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18),
-  idSucursal int NOT NULL CHECK (idSucursal > 0),
-  --PRIMARY KEY (curp)
-  --FOREIGN KEY (idSucursal)
+CREATE TABLE precio(
+  idProducto int NOT NULL CHECK (idProducto > 0) UNIQUE,
+  idPrecio int NOT NULL CHECK (idProducto > 0) UNIQUE,
+  precio NUMERIC NOT NULL,
+  fecha DATE NOT NULL
 );
+
+
+CREATE TABLE tener(
+    idSucursal int NOT NULL CHECK (idSucursal > 0) UNIQUE,
+    idInventario int NOT NULL CHECK (idInventario >0) UNIQUE,
+    cantidad int NOT NULL
+
+);
+CREATE TABLE disponer(
+  idSucursal int NOT NULL CHECK (idSucursal > 0) UNIQUE,
+  idIngrediente int NOT NULL CHECK (idProducto > 0) UNIQUE
+
+);
+CREATE TABLE surtir(
+  idIngrediente int NOT NULL CHECK (idProducto > 0) UNIQUE,
+  rfc CHAR(13) NOT NULL CHECK(CHAR_LENGTH(rfc)=13),
+  precio NUMERIC NOT NULL,
+  cantidad int NOT NULL
+);
+
+CREATE TABLE integrar(
+    idIngrediente int NOT NULL CHECK (idProducto > 0) UNIQUE,
+    idProducto int NOT NULL CHECK (idProducto > 0) UNIQUE,
+    cantidad int NOT NULL CHECK (cantidad >0)
+);
+
+CREATE TABLE consumirmesa(
+  numero int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
+  idProducto int NOT NULL CHECK (idProducto > 0) UNIQUE,
+);
+
+CREATE TABLE consumiraDomicilio(
+  numero int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
+  idProducto int NOT NULL CHECK (idProducto > 0) UNIQUE,
+);
+
+CREATE TABLE enviar(
+  idInventario int NOT NULL CHECK (idInventario >0) UNIQUE,
+  rfc CHAR(13) NOT NULL CHECK(CHAR_LENGTH(rfc)=13),
+  precioe NUMERIC NOT NULL,
+  cantidade int NOT NULL
+);
+CREATE TABLE recomendar (
+idProducto int  CHECK (idProducto > 0) ,
+idProductos int  CHECK (idProducto > 0)
+);
+
+
+
+--Llaves primarias
+ALTER TABLE persona ADD CONSTRAINT persona_pkey PRIMARY KEY (curp);
+ALTER TABLE cliente ADD CONSTRAINT cliente_pkey PRIMARY KEY (curp);
+ALTER TABLE empleado ADD CONSTRAINT empleado_pkey PRIMARY KEY (curp);
+ALTER TABLE taquero ADD CONSTRAINT taquero_pkey PRIMARY KEY (curp);
+ALTER TABLE parrillero ADD CONSTRAINT parrillero_pkey PRIMARY KEY (curp);
+ALTER TABLE cajero ADD CONSTRAINT cajero_pkey PRIMARY KEY (curp);
+ALTER TABLE tortillero ADD CONSTRAINT tortillero_pkey PRIMARY KEY (curp);
+ALTER TABLE mesero ADD CONSTRAINT mesero_pkey PRIMARY KEY (curp);
+ALTER TABLE repartidor ADD CONSTRAINT repartidor_pkey PRIMARY KEY (curp);
+ALTER TABLE sucursal ADD CONSTRAINT sucursal_pkey PRIMARY KEY (idSucursal);
+ALTER TABLE inventario ADD CONSTRAINT inventario_pkey PRIMARY KEY (idInventario);
+ALTER TABLE ingrediente ADD CONSTRAINT ingrediente_pkey PRIMARY KEY (idIngrediente);
+ALTER TABLE producto ADD CONSTRAINT producto_pkey PRIMARY KEY (idProducto);
+ALTER TABLE proveedor ADD CONSTRAINT proveedor_pkey PRIMARY KEY (rfc);
