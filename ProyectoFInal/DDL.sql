@@ -110,7 +110,7 @@ total NUMERIC NOT NULL --triggers
 --PRIMARY KEY (numero)
 );
 CREATE TABLE ticketAdomicilio(
-  numeroAD CHAR(13) CHECK (numeroAD SIMILAR TO '[0-9]{13}') UNIQUE,
+  numeroAD CHAR(21) CHECK (numeroAD SIMILAR TO '[0-9]{21}') UNIQUE,
   curpc  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curpc)=18) ,
   curpr  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curpr)=18) ,
   idSucursal int NOT NULL CHECK (idSucursal > 0) ,
@@ -218,8 +218,8 @@ CREATE TABLE tener(
 );
 CREATE TABLE disponer(
   idSucursal int NOT NULL CHECK (idSucursal > 0) ,
-  idIngrediente int NOT NULL CHECK (idIngrediente > 0)
-
+  idIngrediente int NOT NULL CHECK (idIngrediente > 0),
+  cantidad int NOT NULL
 );
 CREATE TABLE surtir(
   idIngrediente int NOT NULL   CHECK (idIngrediente > 0),
