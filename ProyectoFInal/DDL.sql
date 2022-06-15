@@ -5,10 +5,10 @@ CREATE TABLE persona(
   curp  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
   nombre VARCHAR(50),
   apPat VARCHAR(50),
-  apMat VARCHAR(50)
-  calle VARCHAR(70)
-  numero   int CHECK(numeroT BETWEEN 0 and 9999),
-  cp     CHAR(5) CHECK (cpT SIMILAR TO '[0-9]{5}'),
+  apMat VARCHAR(50),
+  calle VARCHAR(70),
+  numero   int CHECK(numero BETWEEN 0 and 9999),
+  cp     CHAR(5) CHECK (cp SIMILAR TO '[0-9]{5}'),
   estado VARCHAR(30),
   email VARCHAR(80)
 );
@@ -32,11 +32,11 @@ CREATE TABLE telefono(
   --un usuario puede tener varios telefonos pero un telefono solo esta asociado a una persona
   --se puede repetir el curp en la tabla per no los telefonos
 );
-COMMENT ON TABLE telefono IS 'Tabla que guarda el telefono de una persona '
+COMMENT ON TABLE telefono IS 'Tabla que guarda el telefono de una persona ';
 
 CREATE TABLE cliente(
   curp  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
-  puntosAcumulados
+  puntosAcumulados int NOT NULL
   --Los clientes que son empleados tienen el servicio gratis procedimiento almacenado
   --PRIMARY KEY curp
 );
@@ -49,10 +49,10 @@ CREATE TABLE empleado(
   curp  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
   idSucursal int NOT NULL CHECK (idSucursal > 0) UNIQUE,
   rfc CHAR(13) NOT NULL CHECK(CHAR_LENGTH(rfc)=13) UNIQUE,
-  nss CHAR(9) CHECK (cpT SIMILAR TO '[0-9]{9}') UNIQUE,
+  nss CHAR(9) CHECK (nss SIMILAR TO '[0-9]{9}') UNIQUE,
   fechaNacimiento DATE NOT NULL,
   fechadeIngreso DATE NOT NULL ,
-  salario NUMERIC NOT NULL CHECK (salario > 0)
+  salario NUMERIC NOT NULL CHECK (salario > 0),
   antiguedad DATE NOT NULL, -- (procedimientos almacenados )
   edad DATE NOT NULL
   --PRIMARY KEY curp
@@ -84,7 +84,7 @@ CREATE TABLE mesero(
 );
 CREATE TABLE repartidor(
   curp  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18),
-  licencia CHAR(14) CHECK (cpT SIMILAR TO '[0-9]{14}')
+  licencia CHAR(14) CHECK (licencia SIMILAR TO '[0-9]{14}')
   --PRIMARY KEY curp
 );
 CREATE TABLE vehiculo(
@@ -99,23 +99,23 @@ CREATE TABLE vehiculo(
 );
 
 CREATE TABLE ticketmesa(
-numeroTM int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
-curpc  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) ,
-curpm  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) ,
+numeroTM CHAR(19) CHECK (numeroTM SIMILAR TO '[0-9]{19}') UNIQUE,
+curpc  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curpc)=18) ,
+curpm  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curpm)=18) ,
 idSucursal int NOT NULL CHECK (idSucursal > 0),
 fecha DATE NOT NULL,
-tipoPago CHAR(1) NOT NULL CHECK (tipoPago SIMILAR TO '(t|T|e|E|p|P)' )
+tipoPago CHAR(1) NOT NULL CHECK (tipoPago SIMILAR TO '(t|T|e|E|p|P)'),
 subtotal NUMERIC NOT NULL, --triggers
 total NUMERIC NOT NULL --triggers
 --PRIMARY KEY (numero)
 );
 CREATE TABLE ticketAdomicilio(
-  numeroAD int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
-  curpc  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) ,
-  curpr  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18) ,
+  numeroAD CHAR(13) CHECK (numeroAD SIMILAR TO '[0-9]{13}') UNIQUE,
+  curpc  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curpc)=18) ,
+  curpr  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curpr)=18) ,
   idSucursal int NOT NULL CHECK (idSucursal > 0) ,
   fecha DATE NOT NULL,
-  tipoPago CHAR(1) NOT NULL CHECK (tipoPago SIMILAR TO '(t|T|e|E|p|P)' )
+  tipoPago CHAR(1) NOT NULL CHECK (tipoPago SIMILAR TO '(t|T|e|E|p|P)'),
   subtotal NUMERIC NOT NULL, --triggers
   total NUMERIC NOT NULL
   --Primary key (numero)
@@ -128,7 +128,7 @@ CREATE TABLE sucursal(
     numeroS int NOT NULL CHECK(numeroS BETWEEN 1 and 9999),  -- No acepta numeros menores a 1 , ni mayores a 9999
     cpS CHAR(5) NOT NULL  CHECK (cpS SIMILAR TO '[0-9]{5}'), -- No acepta numeros menores a 00001 , ni mayores a 99999
     estadoS VARCHAR(50) NOT NULL  CHECK (estadoS <>'') UNIQUE, --Deberia ser unique ?
-    alcaldia VARCHAR(50) NOT NULL  CHECK (alcaldia <>'') UNIQUE, --Deberia ser unique ?
+    alcaldia VARCHAR(50) NOT NULL  CHECK (alcaldia <>'') UNIQUE --Deberia ser unique ?
     --PRIMARY KEY(idSucursal)
 );
 COMMENT ON TABLE sucursal IS 'Tabla que guarda todos los datos de una sucursal';
@@ -141,10 +141,10 @@ COMMENT ON COLUMN sucursal.alcaldia IS 'Alcaldía donde esta la sucursal';
 
 CREATE TABLE proveedor(
     rfc CHAR(13) NOT NULL CHECK(CHAR_LENGTH(rfc)=13) UNIQUE,
-    nombreP VARCHAR(50) NOT NULL  CHECK (nombre <>''),
-    calleP VARCHAR(70) CHECK (calle <>''),
-    numeroP int CHECK(numero BETWEEN 1 and 9999),  -- No acepta numeros menores a 1 , ni mayores a 9999
-    cpP CHAR(5) CHECK (cp SIMILAR TO '[0-9]{5}'),  -- No acepta numeros menores a 00001 , ni mayores a 99999
+    nombreP VARCHAR(50) NOT NULL  CHECK (nombreP <>''),
+    calleP VARCHAR(70) CHECK (calleP <>''),
+    numeroP int CHECK(numeroP BETWEEN 1 and 9999),  -- No acepta numeros menores a 1 , ni mayores a 9999
+    cpP CHAR(5) CHECK (cpP SIMILAR TO '[0-9]{5}'),  -- No acepta numeros menores a 00001 , ni mayores a 99999
     telefonoP CHAR(10) CHECK(telefonoP SIMILAR TO '[0-9]{10}') UNIQUE
     --PRIMARY KEY(rfc)
 );
@@ -172,11 +172,11 @@ COMMENT ON COLUMN inventario.cantidadI  is 'La cantidad de productos en el inven
 CREATE TABLE producto (
     idProducto int NOT NULL CHECK (idProducto > 0) UNIQUE,
     nombre VARCHAR(50) NOT NULL  CHECK (nombre <>''),
-    tipo CHAR(20) NOT NULL  CHECK (tipo <>''),
+    tipo CHAR(20) NOT NULL  CHECK (tipo <>'')
     --PRIMARY KEY(idProducto)
 );
 CREATE TABLE ingrediente(
-  idIngrediente int NOT NULL CHECK (idProducto > 0) UNIQUE,
+  idIngrediente int NOT NULL CHECK (idIngrediente > 0) UNIQUE,
   marca VARCHAR(30),
   nombreI VARCHAR(30) NOT NULL,
   unidadmedida NUMERIC NOT NULL,
@@ -194,18 +194,17 @@ COMMENT ON COLUMN producto.tipo IS  'Tipo de producto';
 CREATE TABLE salsa (
     idProducto int NOT NULL CHECK (idProducto > 0) UNIQUE,
     presentacion VARCHAR(100),
-    nivelPicor  VARCHAR(100),
+    nivelPicor  VARCHAR(100)
 );
 
 COMMENT ON TABLE salsa IS 'Tabla que guarda la información de la salsa ';
 COMMENT ON COLUMN salsa.idProducto IS  'Identificador de la salsa';
-COMMENT ON COLUMN salsa.recomendacionPlatillo IS  'Recomendación de combinación de salsa y platillo';
 COMMENT ON COLUMN salsa.presentacion  IS 'Presentación de la salsa en un platillo';
 COMMENT ON COLUMN salsa.nivelPicor IS  'Nivel de picor de la salsa';
 
 CREATE TABLE precio(
   idProducto int NOT NULL CHECK (idProducto > 0) UNIQUE,
-  idPrecio int NOT NULL CHECK (idProducto > 0) ,
+  idPrecio int NOT NULL CHECK (idPrecio > 0) ,
   precio NUMERIC NOT NULL,
   fecha DATE NOT NULL
 );
@@ -219,29 +218,29 @@ CREATE TABLE tener(
 );
 CREATE TABLE disponer(
   idSucursal int NOT NULL CHECK (idSucursal > 0) ,
-  idIngrediente int NOT NULL CHECK (idProducto > 0)
+  idIngrediente int NOT NULL CHECK (idIngrediente > 0)
 
 );
 CREATE TABLE surtir(
-  idIngrediente int NOT NULL   CHECK (idProducto > 0),
+  idIngrediente int NOT NULL   CHECK (idIngrediente > 0),
   rfc CHAR(13) NOT NULL CHECK(CHAR_LENGTH(rfc)=13),
   precio NUMERIC NOT NULL,
   cantidad int NOT NULL
 );
 
 CREATE TABLE integrar(
-    idIngrediente int NOT NULL CHECK (idProducto > 0),
+    idIngrediente int NOT NULL CHECK (idIngrediente > 0),
     idProducto int  CHECK (idProducto > 0),
     cantidad int NOT NULL CHECK (cantidad >0)
 );
 
 CREATE TABLE consumirmesa(
-  numero int CHECK(numero BETWEEN 1 and 10000) ,
+  numero CHAR(13) CHECK (numero SIMILAR TO '[0-9]{13}') UNIQUE,
   idProducto int NOT NULL CHECK (idProducto > 0)
 );
 
 CREATE TABLE consumiraDomicilio(
-  numero int CHECK(numero BETWEEN 1 and 10000) ,
+  numero CHAR(13) CHECK (numero SIMILAR TO '[0-9]{13}') UNIQUE,
   idProducto int NOT NULL CHECK (idProducto > 0)
 );
 
@@ -253,7 +252,7 @@ CREATE TABLE enviar(
 );
 CREATE TABLE recomendar (
 idProducto int  CHECK (idProducto > 0) ,
-idProductos int  CHECK (idProducto > 0)
+idProductoS int  CHECK (idProductoS > 0)
 );
 
 
@@ -261,7 +260,6 @@ idProductos int  CHECK (idProducto > 0)
 --Llaves primarias
 ALTER TABLE persona ADD CONSTRAINT persona_pkey PRIMARY KEY (curp);
 ALTER TABLE cliente ADD CONSTRAINT cliente_pkey PRIMARY KEY (curp);
-ALTER TABLE empleado ADD CONSTRAINT empleado_pkey PRIMARY KEY (curp);
 ALTER TABLE taquero ADD CONSTRAINT taquero_pkey PRIMARY KEY (curp);
 ALTER TABLE parrillero ADD CONSTRAINT parrillero_pkey PRIMARY KEY (curp);
 ALTER TABLE cajero ADD CONSTRAINT cajero_pkey PRIMARY KEY (curp);
@@ -285,39 +283,39 @@ ALTER TABLE vehiculo ADD CONSTRAINT vehiculo_pkey PRIMARY KEY (curp,numeroSerie)
 ALTER TABLE precio ADD CONSTRAINT precio_pkey PRIMARY KEY (idProducto,idPrecio);
 
 ALTER TABLE empleado ADD CONSTRAINT empleado_pkey PRIMARY KEY (curp);
-ALTER TABLE empleado ADD CONSTRAINT empleado_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal)
+ALTER TABLE empleado ADD CONSTRAINT empleadof_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE ticketmesa ADD CONSTRAINT ticketmesaN_pkey PRIMARY KEY (numeroTM);
-ALTER TABLE ticketmesa ADD CONSTRAINT ticketmesaC_fkey FOREIGN KEY(curpc) REFERENCES cliente(curp);
-ALTER TABLE ticketmesa ADD CONSTRAINT ticketmesaCm_fkey FOREIGN KEY(curpm) REFERENCES cliente(curp);
-ALTER TABLE ticketmesa ADD CONSTRAINT ticketmesaS_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal);
+ALTER TABLE ticketmesa ADD CONSTRAINT ticketmesaC_fkey FOREIGN KEY(curpc) REFERENCES cliente(curp) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ticketmesa ADD CONSTRAINT ticketmesaCm_fkey FOREIGN KEY(curpm) REFERENCES cliente(curp) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ticketmesa ADD CONSTRAINT ticketmesaS_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE ticketAdomicilio ADD CONSTRAINT ticketAN_pkey PRIMARY KEY (numeroTM);
-ALTER TABLE ticketAdomicilio ADD CONSTRAINT ticketAC_fkey FOREIGN KEY(curpc) REFERENCES cliente(curp);
-ALTER TABLE ticketAdomicilio ADD CONSTRAINT ticketACm_fkey FOREIGN KEY(curpr) REFERENCES cliente(curp);
-ALTER TABLE ticketAdomicilio ADD CONSTRAINT ticketAS_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal);
+ALTER TABLE ticketAdomicilio ADD CONSTRAINT ticketAN_pkey PRIMARY KEY (numeroAD);
+ALTER TABLE ticketAdomicilio ADD CONSTRAINT ticketAC_fkey FOREIGN KEY(curpc) REFERENCES cliente(curp) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ticketAdomicilio ADD CONSTRAINT ticketACm_fkey FOREIGN KEY(curpr) REFERENCES cliente(curp) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ticketAdomicilio ADD CONSTRAINT ticketAS_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE tener  ADD CONSTRAINT tenerS_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal);
-ALTER TABLE tener  ADD CONSTRAINT tenerI_fkey FOREIGN KEY(idInventario) REFERENCES inventario(idInventario);
+ALTER TABLE tener  ADD CONSTRAINT tenerS_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE tener  ADD CONSTRAINT tenerI_fkey FOREIGN KEY(idInventario) REFERENCES inventario(idInventario) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE disponer  ADD CONSTRAINT disponerS_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal);
-ALTER TABLE disponer  ADD CONSTRAINT disponerI_fkey FOREIGN KEY(idIngrediente) REFERENCES ingrediente(idIngrediente);
+ALTER TABLE disponer  ADD CONSTRAINT disponerS_fkey FOREIGN KEY(idSucursal) REFERENCES sucursal(idSucursal) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE disponer  ADD CONSTRAINT disponerI_fkey FOREIGN KEY(idIngrediente) REFERENCES ingrediente(idIngrediente) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
-ALTER TABLE consumirmesa ADD CONSTRAINT consumirmesaN_fkey FOREIGN KEY(numero) REFERENCES sucursal(idSucursal);
-ALTER TABLE consumirmesa ADD CONSTRAINT consumirmesaP_fkey FOREIGN KEY(idProducto) REFERENCES producto(idProducto);
+ALTER TABLE consumirmesa ADD CONSTRAINT consumirmesaN_fkey FOREIGN KEY(numero) REFERENCES ticketmesa(numeroTM) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE consumirmesa ADD CONSTRAINT consumirmesaP_fkey FOREIGN KEY(idProducto) REFERENCES producto(idProducto) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE consumiraDomicilio ADD CONSTRAINT consumirAN_fkey FOREIGN KEY(numero) REFERENCES sucursal(idSucursal);
-ALTER TABLE consumiraDomicilio ADD CONSTRAINT consumirAP_fkey FOREIGN KEY(idProducto) REFERENCES producto(idProducto);
+ALTER TABLE consumiraDomicilio ADD CONSTRAINT consumirAN_fkey FOREIGN KEY(numero) REFERENCES ticketAdomicilio(numeroAD) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE consumiraDomicilio ADD CONSTRAINT consumirAP_fkey FOREIGN KEY(idProducto) REFERENCES producto(idProducto) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE surtir ADD CONSTRAINT surtir_fkey FOREIGN KEY(idIngrediente) REFERENCES ingrediente(idIngrediente);
-ALTER TABLE surtir ADD CONSTRAINT surtirP_fkey FOREIGN KEY(rfc) REFERENCES proveedor(rfc);
+ALTER TABLE surtir ADD CONSTRAINT surtir_fkey FOREIGN KEY(idIngrediente) REFERENCES ingrediente(idIngrediente) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE surtir ADD CONSTRAINT surtirP_fkey FOREIGN KEY(rfc) REFERENCES proveedor(rfc) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE integrar ADD CONSTRAINT integrarI_fkey FOREIGN KEY (idIngrediente) REFERENCES ingrediente(idIngrediente);
-ALTER TABLE integrar ADD CONSTRAINT integrarP_fkey FOREIGN KEY (idProducto) REFERENCES producto(idProducto);
+ALTER TABLE integrar ADD CONSTRAINT integrarI_fkey FOREIGN KEY (idIngrediente) REFERENCES ingrediente(idIngrediente) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE integrar ADD CONSTRAINT integrarP_fkey FOREIGN KEY (idProducto) REFERENCES producto(idProducto) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE enviar ADD CONSTRAINT enviarI_fkey FOREIGN KEY (idInventario) REFERENCES inventario(idInventario);
-ALTER TABLE enviar ADD CONSTRAINT enviarRFC_fkey FOREIGN KEY (rfc) REFERENCES proveedor(rfc);
+ALTER TABLE enviar ADD CONSTRAINT enviarI_fkey FOREIGN KEY (idInventario) REFERENCES inventario(idInventario) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE enviar ADD CONSTRAINT enviarRFC_fkey FOREIGN KEY (rfc) REFERENCES proveedor(rfc) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE recomendar ADD CONSTRAINT recomendarP_fkey FOREIGN KEY (idProducto) REFERENCES producto(idProducto);
-ALTER TABLE recomendar ADD CONSTRAINT recomendarS_fkey FOREIGN KEY (idProducto) REFERENCES salsa(idProducto);
+ALTER TABLE recomendar ADD CONSTRAINT recomendarP_fkey FOREIGN KEY (idProducto) REFERENCES producto(idProducto) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE recomendar ADD CONSTRAINT recomendarS_fkey FOREIGN KEY (idProductoS) REFERENCES salsa(idProducto) ON UPDATE CASCADE ON DELETE CASCADE;
