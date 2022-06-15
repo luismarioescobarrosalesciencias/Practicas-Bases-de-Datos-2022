@@ -1,0 +1,35 @@
+idInventario,tipo,marca ,cantidad 
+1,servilletas,cantidadgreen,186
+2,plato circular,naturalplot,101
+3,plato hondo,wecare,160
+4,plato plano,nawovao,444
+5,tenedor,cantidadgreen,139
+6,cuchara salsa,wecare,44
+7,cuchara chica,cantidadgreen,121
+8,cuchara tasa,nawovao,118
+9,cuchillo,nawovao,86
+10,tasa,cantidadgreen,296
+11,vaso,wecare,173
+12,gel antibacterial,ecoshell,249
+13,desinfectante,wecare,451
+14,plato unicel,bambooproject,43
+15,charola unicel ,herbolare,47
+16,charola unicel grande,herbolare,376
+17,vaso unicel,naturalplot,477
+18,tapa vaso unicel,ecoshell,216
+19,popote,wecare,232
+20,bolsa para salsa,bambooproject,333
+21,molcajete,ecoshell,315
+22,licuadora,nawovao,118
+23,sarten,ecoshell,435
+24,parilla,naturalplot,344
+25,trompo,bambooproject,259
+26,comal,wecare,61
+27,terminal,herbolare,146
+28,rollo de ticket,ecoshell,223
+29,block de notas de remision,stackman,380
+30,palillos,wecare,473
+31,papel aluminio,ecoshell,396
+32,saleros,cantidadgreen,137
+33,servilleteros,papel,345
+34,hielera,desconocido,411
