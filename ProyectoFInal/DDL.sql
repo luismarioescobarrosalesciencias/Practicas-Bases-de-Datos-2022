@@ -29,6 +29,8 @@ CREATE TABLE telefono(
   telefono CHAR(10) CHECK(telefono SIMILAR TO '[0-9]{10}') UNIQUE
   --PRIMARY KEY
   --PRIMARY KEY
+  --un usuario puede tener varios telefonos pero un telefono solo esta asociado a una persona
+  --se puede repetir el curp en la tabla per no los telefonos
 );
 COMMENT ON TABLE telefono IS 'Tabla que guarda el telefono de una persona '
 
@@ -86,11 +88,12 @@ CREATE TABLE repartidor(
   --PRIMARY KEY curp
 );
 CREATE TABLE vehiculo(
-   curp  CHAR(18) NOT NULL CHECK(CHAR_LENGTH(curp)=18),
-   numeroSerie CHAR(18) NOT NULL CHECK(CHAR_LENGTH(numeroSerie)=17) UNIQUE  ,
+   curp  CHAR(18)  CHECK(CHAR_LENGTH(curp)=18) UNIQUE,
+   numeroSerie CHAR(18) NOT NULL CHECK(CHAR_LENGTH(numeroSerie)=17) ,
    marca  CHAR(20),
    modelo CHAR(20),
    tipo   CHAR(20)
+   --los vehiculos pueden ser de la empresa y pueden ser prestados (suposicion)
    --PRIMARY KEY curp
    --PRIMARY KEY numeroSerie
 );
@@ -220,31 +223,31 @@ CREATE TABLE disponer(
 
 );
 CREATE TABLE surtir(
-  idIngrediente int NOT NULL CHECK (idProducto > 0) UNIQUE,
+  idIngrediente int NOT NULL   CHECK (idProducto > 0),
   rfc CHAR(13) NOT NULL CHECK(CHAR_LENGTH(rfc)=13),
   precio NUMERIC NOT NULL,
   cantidad int NOT NULL
 );
 
 CREATE TABLE integrar(
-    idIngrediente int NOT NULL CHECK (idProducto > 0) UNIQUE,
-    idProducto int NOT NULL CHECK (idProducto > 0) UNIQUE,
+    idIngrediente int NOT NULL CHECK (idProducto > 0),
+    idProducto int  CHECK (idProducto > 0),
     cantidad int NOT NULL CHECK (cantidad >0)
 );
 
 CREATE TABLE consumirmesa(
-  numero int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
-  idProducto int NOT NULL CHECK (idProducto > 0) UNIQUE,
+  numero int CHECK(numero BETWEEN 1 and 10000) ,
+  idProducto int NOT NULL CHECK (idProducto > 0)
 );
 
 CREATE TABLE consumiraDomicilio(
-  numero int CHECK(numero BETWEEN 1 and 10000) UNIQUE,
-  idProducto int NOT NULL CHECK (idProducto > 0) UNIQUE,
+  numero int CHECK(numero BETWEEN 1 and 10000) ,
+  idProducto int NOT NULL CHECK (idProducto > 0)
 );
 
 CREATE TABLE enviar(
   idInventario int NOT NULL CHECK (idInventario >0) UNIQUE,
-  rfc CHAR(13) NOT NULL CHECK(CHAR_LENGTH(rfc)=13),
+  rfc CHAR(13)  CHECK(CHAR_LENGTH(rfc)=13),
   precioe NUMERIC NOT NULL,
   cantidade int NOT NULL
 );
@@ -318,6 +321,3 @@ ALTER TABLE enviar ADD CONSTRAINT enviarRFC_fkey FOREIGN KEY (rfc) REFERENCES pr
 
 ALTER TABLE recomendar ADD CONSTRAINT recomendarP_fkey FOREIGN KEY (idProducto) REFERENCES producto(idProducto);
 ALTER TABLE recomendar ADD CONSTRAINT recomendarS_fkey FOREIGN KEY (idProducto) REFERENCES salsa(idProducto);
-
---enviar
---recomendar
